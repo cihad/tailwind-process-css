@@ -1,0 +1,39 @@
+{
+  "name": "react",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.2.0",
+    "@tailwindcss/custom-forms": "^0.2.1",
+    "@tailwindcss/forms": "^0.2.1",
+    "@tailwindcss/forms-next": "npm:@tailwindcss/forms@0.5.2",
+    "@tailwindcss/line-clamp": "^0.2.0",
+    "@tailwindcss/line-clamp-next": "npm:@tailwindcss/line-clamp@0.4.0",
+    "@tailwindcss/typography": "^0.5.7",
+    "@tailwindcss/typography-next": "npm:@tailwindcss/typography@0.5.2",
+    "@tailwindcss/ui": "^0.7.2",
+    "autoprefixer": "^10.0.2",
+    "autoprefixer-postcss7": "npm:autoprefixer@9.8.6",
+    "dlv": "^1.1.3",
+    "dset": "^3.1.2",
+    "klona": "^2.0.5",
+    "postcss": "^8.0.9",
+    "postcss-v7": "npm:postcss@^7.0.32",
+    "postcss-selector-parser": "^6.0.10",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tailwindcss": "^1.0",
+    "tailwindcss-insiders": "npm:tailwindcss@0.0.0-insiders.2cd6fad",
+    "tailwindcss-v1": "npm:tailwindcss@1.9.6",
+    "tailwindcss-v2": "npm:tailwindcss@2.2.19"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "react-scripts": "latest"
+  }
+}
