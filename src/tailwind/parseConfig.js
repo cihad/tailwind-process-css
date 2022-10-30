@@ -1,8 +1,8 @@
-import { PLUGINS, PLUGIN_BUILDER_VERSION } from './constants';
-import colors2 from 'tailwindcss-v2/colors';
-import colors3 from 'tailwindcss/colors';
-import colorsInsiders from 'tailwindcss-insiders/colors';
-import { withoutLogs } from './withoutLogs';
+import { PLUGINS, PLUGIN_BUILDER_VERSION } from "./constants";
+import colors2 from "tailwindcss-v2/colors";
+import colors3 from "tailwindcss/colors";
+import colorsInsiders from "tailwindcss-insiders/colors";
+import { withoutLogs } from "./utils/withoutLogs";
 
 let colors = {
   2: colors2,
@@ -17,9 +17,9 @@ export async function parseConfig(configStr, tailwindVersion) {
     await (0, eval)('import("")');
   } catch (error) {
     if (error instanceof TypeError) {
-      self.importShim = (0, eval)('u=>import(u)');
+      self.importShim = (0, eval)("u=>import(u)");
     } else {
-      importScripts('/js/shimport-2.0.4.js');
+      importScripts("/js/shimport-2.0.4.js");
       self.importShim = __shimport__.load;
     }
   }
@@ -27,7 +27,7 @@ export async function parseConfig(configStr, tailwindVersion) {
   class RequireError extends Error {
     constructor(message, line) {
       super(message);
-      this.name = 'RequireError';
+      this.name = "RequireError";
       this.line = line;
     }
   }
@@ -71,20 +71,20 @@ export async function parseConfig(configStr, tailwindVersion) {
   try {
     await eval(
       before +
-        '\n' +
+        "\n" +
         configStr
-          .split('\n')
+          .split("\n")
           .map((line, i) =>
             line.replace(
               /\brequire\(([^)]*)\)/g,
               (_m, id) =>
-                `(await require(${id.trim() === '' ? 'undefined' : id}, ${
+                `(await require(${id.trim() === "" ? "undefined" : id}, ${
                   i + 1
                 }, ${JSON.stringify(builtinPlugins)}))`
             )
           )
-          .join('\n') +
-        '\n' +
+          .join("\n") +
+        "\n" +
         after
     );
   } catch (error) {
@@ -92,10 +92,10 @@ export async function parseConfig(configStr, tailwindVersion) {
 
     if (error instanceof RequireError) {
       line = error.line;
-    } else if (typeof error.line !== 'undefined') {
-      line = error.line - 1 - before.split('\n').length;
+    } else if (typeof error.line !== "undefined") {
+      line = error.line - 1 - before.split("\n").length;
     } else {
-      const lines = error.stack.split('\n');
+      const lines = error.stack.split("\n");
       for (let i = 0; i < lines.length; i++) {
         const re = /:([0-9]+):([0-9]+)/g;
         const matches = [];
@@ -106,7 +106,7 @@ export async function parseConfig(configStr, tailwindVersion) {
         if (matches.length > 0) {
           line =
             parseInt(matches[matches.length - 1][1], 10) -
-            before.split('\n').length;
+            before.split("\n").length;
           break;
         }
       }
@@ -115,7 +115,7 @@ export async function parseConfig(configStr, tailwindVersion) {
     return {
       _error: {
         message: error.message,
-        line: typeof line === 'undefined' ? undefined : line,
+        line: typeof line === "undefined" ? undefined : line,
       },
     };
   }

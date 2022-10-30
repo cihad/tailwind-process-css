@@ -1,33 +1,10 @@
-// import { TextDocument } from 'vscode-languageserver-textdocument'
-import {
-  //   doComplete,
-  //   resolveCompletionItem,
-  //   doValidate,
-  //   doHover,
-  //   getDocumentColors,
-  //   completionsFromClassList,
-  getColor,
-} from "tailwindcss-language-service";
-// import {
-//   asCompletionResult as asMonacoCompletionResult,
-//   asCompletionItem as asMonacoCompletionItem,
-//   asDiagnostics as asMonacoDiagnostics,
-//   asHover as asMonacoHover,
-//   asRange as asMonacoRange,
-// } from '../monaco/lspToMonaco'
-// import {
-//   asCompletionItem as asLspCompletionItem,
-//   asRange as asLspRange,
-// } from '../monaco/monacoToLsp'
-// import CompileWorker from 'worker-loader!./compile.worker.js'
-// import { createWorkerQueue } from '../utils/workers'
-// import './subworkers'
-import { compile } from "./compile";
-import { getVariants } from "./utils/getVariants";
-import { parseConfig } from "./parseConfig";
-import { toValidTailwindVersion } from "./utils/toValidTailwindVersion";
-import { isObject } from "./utils/object";
-// import { format } from '../monaco/format'
+import { getColor } from "tailwindcss-language-service";
+import { createWorkerQueue } from "../utils/workers";
+import "./subworkers";
+import { getVariants } from "../utils/getVariants";
+import { parseConfig } from "../parseConfig";
+import { toValidTailwindVersion } from "../utils/toValidTailwindVersion";
+import { isObject } from "../utils/object";
 
 const deps = {
   generateRules: {
@@ -58,7 +35,9 @@ const deps = {
   },
 };
 
-// const compileWorker = createWorkerQueue(CompileWorker)
+const compileWorker = createWorkerQueue(
+  new Worker(new URL("./compile.worker.js", import.meta.url))
+);
 
 let state;
 
@@ -66,119 +45,7 @@ let lastHtml;
 let lastCss;
 let lastConfig;
 
-export async function postcss(event) {
-  // if (event.data.lsp) {
-  //   let result
-
-  //   function fallback(fn, fallbackValue) {
-  //     if (!state || !state.enabled) return fallbackValue
-  //     return fn()
-  //   }
-
-  //   const document = TextDocument.create(
-  //     event.data.lsp.uri,
-  //     event.data.lsp.language,
-  //     1,
-  //     event.data.lsp.text
-  //   )
-
-  //   switch (event.data.lsp.type) {
-  //     case 'complete':
-  //       result = await fallback(
-  //         async () =>
-  //           asMonacoCompletionResult(
-  //             await doComplete(
-  //               state,
-  //               document,
-  //               {
-  //                 line: event.data.lsp.position.lineNumber - 1,
-  //                 character: event.data.lsp.position.column - 1,
-  //               },
-  //               event.data.lsp.context
-  //             )
-  //           ),
-  //         { suggestions: [] }
-  //       )
-  //       break
-  //     case 'completeString':
-  //       result = fallback(() =>
-  //         asMonacoCompletionResult(
-  //           completionsFromClassList(
-  //             state,
-  //             document.getText(),
-  //             asLspRange(event.data.lsp.range)
-  //           )
-  //         )
-  //       )
-  //       break
-  //     case 'resolveCompletionItem':
-  //       result = await fallback(async () => {
-  //         let item = await resolveCompletionItem(
-  //           state,
-  //           asLspCompletionItem(event.data.lsp.item)
-  //         )
-  //         if (item.documentation?.value) {
-  //           item.documentation.value = item.documentation.value.replace(
-  //             /^```css/,
-  //             '```tailwindcss'
-  //           )
-  //         }
-  //         return asMonacoCompletionItem(item)
-  //       })
-  //       break
-  //     case 'hover':
-  //       result = await fallback(async () => {
-  //         const hover = await doHover(state, document, {
-  //           line: event.data.lsp.position.lineNumber - 1,
-  //           character: event.data.lsp.position.column - 1,
-  //         })
-  //         if (hover && hover.contents.language === 'css') {
-  //           hover.contents.language = 'tailwindcss'
-  //         }
-  //         return asMonacoHover(hover)
-  //       })
-  //       break
-  //     case 'validate':
-  //       result = await fallback(
-  //         async () => asMonacoDiagnostics(await doValidate(state, document)),
-  //         []
-  //       )
-  //       break
-  //     case 'documentColors':
-  //       result = await fallback(
-  //         async () =>
-  //           (
-  //             await getDocumentColors(state, document)
-  //           ).map(({ color, range }) => ({
-  //             range: asMonacoRange(range),
-  //             color,
-  //           })),
-  //         []
-  //       )
-  //       break
-  //   }
-
-  //   return postMessage({ _id: event.data._id, result })
-  // }
-
-  // if (event.data.prettier) {
-  //   try {
-  //     return postMessage({
-  //       _id: event.data._id,
-  //       result: await format(
-  //         state,
-  //         event.data.prettier.text,
-  //         event.data.prettier.language
-  //       ),
-  //     })
-  //   } catch (error) {
-  //     return postMessage({
-  //       _id: event.data._id,
-  //       error,
-  //     })
-  //   }
-  // }
-
+addEventListener("message", async (event) => {
   if (
     (typeof event.data.css !== "undefined" &&
       typeof event.data.config !== "undefined" &&
@@ -195,15 +62,13 @@ export async function postcss(event) {
     lastCss = css;
     lastConfig = config;
 
-    const result = await compile({
-      data: {
-        ...event.data,
-        skipIntelliSense: state ? event.data.skipIntelliSense : false,
-        _isFreshBuild: isFreshBuild,
-        html,
-        css,
-        config,
-      },
+    const result = await compileWorker.emit({
+      ...event.data,
+      skipIntelliSense: state ? event.data.skipIntelliSense : false,
+      _isFreshBuild: isFreshBuild,
+      html,
+      css,
+      config,
     });
 
     if (!result.error && !result.canceled) {
@@ -296,14 +161,14 @@ export async function postcss(event) {
         },
       });
       state.enabled = true;
-      return {
+      postMessage({
         _id: event.data._id,
         css: result.css,
         html: result.html,
         jit: result.jit,
-      };
+      });
     } else {
-      return { ...result, _id: event.data._id };
+      postMessage({ ...result, _id: event.data._id });
     }
   }
-}
+});

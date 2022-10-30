@@ -1,12 +1,14 @@
-import { toValidTailwindVersion } from "./utils/toValidTailwindVersion";
-import { processCss } from "./processCss";
-import { parseConfig } from "./parseConfig";
+import { toValidTailwindVersion } from "../utils/toValidTailwindVersion";
+import { processCss } from "../processCss";
+import { parseConfig } from "../parseConfig";
 
-let BUILD_ID = 0;
+self.BUILD_ID = 0;
+
 let current;
+
 let tailwindVersion = "2";
 
-export async function compile(event) {
+addEventListener("message", async (event) => {
   if (event.data._current) {
     current = event.data._current;
     return;
@@ -20,15 +22,25 @@ export async function compile(event) {
   }
 
   if (event.data._isFreshBuild) {
-    BUILD_ID++;
+    self.BUILD_ID++;
   }
 
-  let buildId = BUILD_ID;
+  let buildId = self.BUILD_ID;
+
+  function respond(data) {
+    setTimeout(() => {
+      if (event.data._id === current) {
+        postMessage({ _id: event.data._id, ...data });
+      } else {
+        postMessage({ _id: event.data._id, canceled: true });
+      }
+    }, 0);
+  }
 
   let configOrError = await parseConfig(config, tailwindVersion);
 
   if (configOrError._error) {
-    return {
+    return respond({
       error: {
         message: configOrError._error.message,
         file: "Config",
@@ -37,7 +49,7 @@ export async function compile(event) {
             ? undefined
             : configOrError._error.line,
       },
-    };
+    });
   }
 
   try {
@@ -53,17 +65,17 @@ export async function compile(event) {
       tailwindVersion,
       event.data.skipIntelliSense
     );
-    return { state, css: compiledCss, html: compiledHtml, jit, buildId };
+    respond({ state, css: compiledCss, html: compiledHtml, jit, buildId });
   } catch (error) {
     if (error.toString().startsWith("CssSyntaxError")) {
       const match = error.message.match(/^.*?:([0-9]+):([0-9]+): (.*?)$/);
       if (match === null) {
-        return { error: { message: error.message } };
+        respond({ error: { message: error.message } });
       } else {
-        return { error: { message: match[3], file: "CSS", line: match[1] } };
+        respond({ error: { message: match[3], file: "CSS", line: match[1] } });
       }
     } else {
-      return { error: { message: error.message } };
+      respond({ error: { message: error.message } });
     }
   }
-}
+});

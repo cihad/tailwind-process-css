@@ -1,86 +1,77 @@
-import React from "react"
-import "./style.css"
-import { processCss } from "./tailwind/processCss"
-import { html, css } from "./sampleData"
-import { parseConfig } from "./tailwind/parseConfig"
-
-let BUILD_ID = 0
-let tailwindVersion = "2"
-
-function getEvent() {
-	return {
-		data: { html, css },
-	}
-}
-
-const compile = async function () {
-	const event = getEvent()
-	const html = event.data.html
-	const css = event.data.css
-	const config = event.data.config
-	if ("tailwindVersion" in event.data) {
-		tailwindVersion = toValidTailwindVersion(event.data.tailwindVersion)
-	}
-
-	if (event.data._isFreshBuild) {
-		BUILD_ID++
-	}
-
-	let buildId = BUILD_ID
-
-	// function respond(data) {
-	//   setTimeout(() => {
-	//     if (event.data._id === current) {
-	//       postMessage({ _id: event.data._id, ...data });
-	//     } else {
-	//       postMessage({ _id: event.data._id, canceled: true });
-	//     }
-	//   }, 0);
-	// }
-
-	let configOrError = await parseConfig(config, tailwindVersion)
-
-	// if (configOrError._error) {
-	//   return respond({
-	//     error: {
-	//       message: configOrError._error.message,
-	//       file: 'Config',
-	//       line:
-	//         typeof configOrError._error.line === 'undefined'
-	//           ? undefined
-	//           : configOrError._error.line,
-	//     },
-	//   });
-	// }
-
-	const {
-		css: compiledCss,
-		html: compiledHtml,
-		state,
-		jit,
-	} = await processCss(
-		configOrError,
-		html,
-		css,
-		tailwindVersion,
-		event.data.skipIntelliSense
-	)
-
-	console.log({
-		css: compiledCss,
-		html: compiledHtml,
-		state,
-		jit,
-	})
-}
-
-compile()
+import React, { useEffect } from "react";
+import "./style.css";
+import { requestResponse } from "./tailwind/utils/workers";
+import * as data from "./sampleData";
+const worker = new Worker(
+  new URL("./tailwind/workers/postcss.worker.js", import.meta.url)
+);
 
 export default function App() {
-	return (
-		<div>
-			<h1>Hello StackBlitz!</h1>
-			<p>Start editing to see some magic happen :)</p>
-		</div>
-	)
+  const frame = React.useRef();
+  const [html, setHtml] = React.useState(data.html);
+  const [compiled, setCompiled] = React.useState(getHtmlDocument(html, ""));
+  const deferredHtml = React.useDeferredValue(html);
+
+  function handleChange(e) {
+    console.log(e);
+    setHtml(e.target.value);
+  }
+
+  React.useEffect(() => {
+    async function compile() {
+      const res = await requestResponse(worker, {
+        ...data,
+        html,
+      });
+
+      // res = { css, html, jit, canceled, error }
+      setCompiled(getHtmlDocument(html, res.css));
+    }
+
+    compile();
+  }, [deferredHtml]);
+
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", gap: 10 }}>
+      <div style={{ flex: 1 }}>
+        <textarea
+          value={html}
+          onChange={handleChange}
+          style={{ height: "100%", width: "100%" }}
+        ></textarea>
+      </div>
+      <div style={{ flex: 1 }}>
+        <iframe
+          onLoad={async () => {
+            const res = await requestResponse(worker, {
+              ...data,
+              html,
+            });
+            setCompiled(getHtmlDocument(html, res.css));
+          }}
+          ref={frame}
+          style={{ height: "100%", width: "100%" }}
+          srcDoc={compiled}
+        ></iframe>
+      </div>
+    </div>
+  );
+}
+
+function getHtmlDocument(html, css) {
+  return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style id="compiled-css">
+      ${css}
+    </style>
+  </head>
+  <body>
+    ${html}
+  </body>
+  </html>`;
 }
