@@ -3,21 +3,21 @@
     "browserslist"
   ],
   "stats": "errors-warnings",
-  "mode": "development",
-  "bail": false,
-  "devtool": "cheap-module-source-map",
+  "mode": "production",
+  "bail": true,
+  "devtool": "source-map",
   "entry": "/home/cihad/projects/tailwind-process-css/src/index.js",
   "output": {
     "path": "/home/cihad/projects/tailwind-process-css/build",
-    "pathinfo": true,
-    "filename": "static/js/bundle.js",
-    "chunkFilename": "static/js/[name].chunk.js",
+    "pathinfo": false,
+    "filename": "static/js/[name].[contenthash:8].js",
+    "chunkFilename": "static/js/[name].[contenthash:8].chunk.js",
     "assetModuleFilename": "static/media/[name].[hash][ext]",
     "publicPath": "/"
   },
   "cache": {
     "type": "filesystem",
-    "version": "56e655ab29e15739b04e5da711108e4f",
+    "version": "fd29815a896a0fa4412eb36034ff2cae",
     "cacheDirectory": "/home/cihad/projects/tailwind-process-css/node_modules/.cache",
     "store": "pack",
     "buildDependencies": {
@@ -34,7 +34,7 @@
     "level": "none"
   },
   "optimization": {
-    "minimize": false,
+    "minimize": true,
     "minimizer": [
       {
         "options": {
@@ -204,13 +204,11 @@
               ],
               "babelrc": false,
               "configFile": false,
-              "cacheIdentifier": "development:babel-plugin-named-asset-import@0.3.8:babel-preset-react-app@10.0.1:react-dev-utils@12.0.1:react-scripts@5.0.1",
-              "plugins": [
-                "/home/cihad/projects/tailwind-process-css/node_modules/react-refresh/babel.js"
-              ],
+              "cacheIdentifier": "production:babel-plugin-named-asset-import@0.3.8:babel-preset-react-app@10.0.1:react-dev-utils@12.0.1:react-scripts@5.0.1",
+              "plugins": [],
               "cacheDirectory": true,
               "cacheCompression": false,
-              "compact": false
+              "compact": true
             }
           },
           {
@@ -231,7 +229,7 @@
               ],
               "cacheDirectory": true,
               "cacheCompression": false,
-              "cacheIdentifier": "development:babel-plugin-named-asset-import@0.3.8:babel-preset-react-app@10.0.1:react-dev-utils@12.0.1:react-scripts@5.0.1",
+              "cacheIdentifier": "production:babel-plugin-named-asset-import@0.3.8:babel-preset-react-app@10.0.1:react-dev-utils@12.0.1:react-scripts@5.0.1",
               "sourceMaps": true,
               "inputSourceMap": true
             }
@@ -240,7 +238,10 @@
             "test": {},
             "exclude": {},
             "use": [
-              "/home/cihad/projects/tailwind-process-css/node_modules/style-loader/dist/cjs.js",
+              {
+                "loader": "/home/cihad/projects/tailwind-process-css/node_modules/mini-css-extract-plugin/dist/loader.js",
+                "options": {}
+              },
               {
                 "loader": "/home/cihad/projects/tailwind-process-css/node_modules/css-loader/dist/cjs.js",
                 "options": {
@@ -280,7 +281,10 @@
           {
             "test": {},
             "use": [
-              "/home/cihad/projects/tailwind-process-css/node_modules/style-loader/dist/cjs.js",
+              {
+                "loader": "/home/cihad/projects/tailwind-process-css/node_modules/mini-css-extract-plugin/dist/loader.js",
+                "options": {}
+              },
               {
                 "loader": "/home/cihad/projects/tailwind-process-css/node_modules/css-loader/dist/cjs.js",
                 "options": {
@@ -320,7 +324,10 @@
             "test": {},
             "exclude": {},
             "use": [
-              "/home/cihad/projects/tailwind-process-css/node_modules/style-loader/dist/cjs.js",
+              {
+                "loader": "/home/cihad/projects/tailwind-process-css/node_modules/mini-css-extract-plugin/dist/loader.js",
+                "options": {}
+              },
               {
                 "loader": "/home/cihad/projects/tailwind-process-css/node_modules/css-loader/dist/cjs.js",
                 "options": {
@@ -373,7 +380,10 @@
           {
             "test": {},
             "use": [
-              "/home/cihad/projects/tailwind-process-css/node_modules/style-loader/dist/cjs.js",
+              {
+                "loader": "/home/cihad/projects/tailwind-process-css/node_modules/mini-css-extract-plugin/dist/loader.js",
+                "options": {}
+              },
               {
                 "loader": "/home/cihad/projects/tailwind-process-css/node_modules/css-loader/dist/cjs.js",
                 "options": {
@@ -439,7 +449,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.9950686241243958"
+            "ident": "simple-functional-loader-0.9235494392961636"
           }
         ]
       },
@@ -449,7 +459,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.936477073337566"
+            "ident": "simple-functional-loader-0.9950104112972278"
           }
         ]
       },
@@ -459,7 +469,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.08412301751600393"
+            "ident": "simple-functional-loader-0.36222568826343027"
           }
         ]
       },
@@ -469,7 +479,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.7608021762979664"
+            "ident": "simple-functional-loader-0.9512484453271648"
           }
         ]
       },
@@ -478,7 +488,7 @@
         "use": {
           "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
           "options": {},
-          "ident": "simple-functional-loader-0.07045170909904908"
+          "ident": "simple-functional-loader-0.9471420484049355"
         }
       },
       {
@@ -487,7 +497,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.1262152122894411"
+            "ident": "simple-functional-loader-0.7743993735892567"
           }
         ]
       },
@@ -497,7 +507,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.7329630301789103"
+            "ident": "simple-functional-loader-0.10061742995985035"
           }
         ]
       },
@@ -507,7 +517,7 @@
           {
             "loader": "/home/cihad/projects/tailwind-process-css/node_modules/simple-functional-loader/index.js",
             "options": {},
-            "ident": "simple-functional-loader-0.1524289534009733"
+            "ident": "simple-functional-loader-0.315913267031243"
           }
         ]
       }
@@ -525,13 +535,30 @@
     {
       "userOptions": {
         "inject": true,
-        "template": "/home/cihad/projects/tailwind-process-css/public/index.html"
+        "template": "/home/cihad/projects/tailwind-process-css/public/index.html",
+        "minify": {
+          "removeComments": true,
+          "collapseWhitespace": true,
+          "removeRedundantAttributes": true,
+          "useShortDoctype": true,
+          "removeEmptyAttributes": true,
+          "removeStyleLinkTypeAttributes": true,
+          "keepClosingSlash": true,
+          "minifyJS": true,
+          "minifyCSS": true,
+          "minifyURLs": true
+        }
       },
       "version": 5
     },
     {
+      "tests": [
+        {}
+      ]
+    },
+    {
       "replacements": {
-        "NODE_ENV": "development",
+        "NODE_ENV": "production",
         "PUBLIC_URL": "",
         "FAST_REFRESH": true
       }
@@ -542,25 +569,23 @@
     {
       "definitions": {
         "process.env": {
-          "NODE_ENV": "\"development\"",
+          "NODE_ENV": "\"production\"",
           "PUBLIC_URL": "\"\"",
           "FAST_REFRESH": "true"
         }
       }
     },
     {
+      "_sortedModulesCache": {},
       "options": {
-        "overlay": false,
-        "exclude": {},
-        "include": {}
+        "filename": "static/css/[name].[contenthash:8].css",
+        "ignoreOrder": false,
+        "runtime": true,
+        "chunkFilename": "static/css/[name].[contenthash:8].chunk.css"
+      },
+      "runtimeOptions": {
+        "linkType": "text/css"
       }
-    },
-    {
-      "options": {},
-      "logger": {},
-      "pathCache": {},
-      "fsOperations": 0,
-      "primed": false
     },
     {
       "options": {
